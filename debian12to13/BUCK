@@ -1,0 +1,28 @@
+# Copyright 1999-2026. WebPros International GmbH. All rights reserved.
+# vim:ft=python:
+
+include_defs('//product.defs.py')
+
+
+genrule(
+    name = 'config',
+    srcs = ['config.py'],
+    out = 'config.py',
+    bash = '''\
+        DEB12TO13_VERSION='{version}'
+        DEB12TO13_REVISION='{revision}'
+        sed -e "s/@@DEB12TO13_VERSION@@/$DEB12TO13_VERSION/g; s/@@DEB12TO13_REVISION@@/$DEB12TO13_REVISION/g" "$SRCS" >"$OUT"
+    '''.format(
+        version=get_deb12to13_version(),
+        revision=get_deb12to13_revision(),
+    ),
+)
+
+python_library(
+    name = 'lib',
+    srcs = glob(
+        ['**/*.py'],
+        exclude = ['config.py'],
+    ) + [':config'],
+    visibility = ['PUBLIC'],
+)

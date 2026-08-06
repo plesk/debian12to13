@@ -7,5 +7,5 @@
     interpreter = /usr/bin/python3
 
 [repositories]
-    debian11to12 = .
+    debian12to13 = .
     dist-upgrader = ./dist-upgrader
