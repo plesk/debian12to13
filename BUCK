@@ -5,22 +5,22 @@ include_defs('//product.defs.py')
 
 
 python_binary(
-    name = 'debian11to12.pex',
+    name = 'debian12to13.pex',
     platform = 'py3',
     # libgcc_s.so.1 is preloaded to workaround crash due to "libgcc_s.so.1 must
     # be installed for pthread_cancel to work" instead of clean exit after
     # dist-upgrade, see https://bugs.python.org/issue44434
     build_args = ['--python-shebang', '/usr/bin/env -S LD_PRELOAD=libgcc_s.so.1 python3'],
-    main_module = 'debian11to12.main',
+    main_module = 'debian12to13.main',
     deps = [
         'dist-upgrader//pleskdistup:lib',
-        '//debian11to12:lib',
+        '//debian12to13:lib',
     ],
 )
 
 genrule(
-    name = 'debian11to12',
-    srcs = [':debian11to12.pex'],
-    out = 'debian11to12',
-    cmd = 'cp $(location :debian11to12.pex) $OUT && chmod +x $OUT',
+    name = 'debian12to13',
+    srcs = [':debian12to13.pex'],
+    out = 'debian12to13',
+    cmd = 'cp $(location :debian12to13.pex) $OUT && chmod +x $OUT',
 )

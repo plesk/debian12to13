@@ -1,4 +1,4 @@
-# Copyright 2023-2024. WebPros International GmbH. All rights reserved.
+# Copyright 1999-2026. WebPros International GmbH. All rights reserved.
 
 import argparse
 import os
@@ -9,12 +9,12 @@ from pleskdistup.common import action, feedback, strings
 from pleskdistup.phase import Phase
 from pleskdistup.upgrader import dist, DistUpgrader, DistUpgraderFactory, PathType
 
-import debian11to12.config
+import debian12to13.config
 
 
-class Debian11to12Upgrader(DistUpgrader):
-    _distro_from = dist.Debian("11")
-    _distro_to = dist.Debian("12")
+class Debian12to13Upgrader(DistUpgrader):
+    _distro_from = dist.Debian("12")
+    _distro_to = dist.Debian("13")
 
     def __init__(self):
         super().__init__()
@@ -40,15 +40,15 @@ class Debian11to12Upgrader(DistUpgrader):
 
     @property
     def upgrader_name(self) -> str:
-        return "Plesk::Debian11to12Upgrader"
+        return "Plesk::Debian12to13Upgrader"
 
     @property
     def upgrader_version(self) -> str:
-        return debian11to12.config.revision
+        return debian12to13.config.revision
 
     @property
     def issues_url(self) -> str:
-        return "https://github.com/plesk/debian11to12/issues"
+        return "https://github.com/plesk/debian12to13/issues"
 
     def prepare_feedback(
         self,
@@ -93,12 +93,16 @@ class Debian11to12Upgrader(DistUpgrader):
             ],
             "Switch repositories": [
                 actions.AdoptAptRepositoriesUbuntu([
-                    strings.create_replace_string_function('bullseye', 'bookworm'),
-                    strings.create_replace_regexp_function(r'(http|https)://([^/]+)/(\b.*)(debian|debian-testing)/11\.11(\b.*)', '\g<1>://\g<2>/\g<3>\g<4>/12.7\g<5>'),
-                    strings.create_replace_regexp_function(r'(http|https)://([^/]+)/(\b.*)(debian|debian-testing)/11(\b.*)', '\g<1>://\g<2>/\g<3>\g<4>/12\g<5>'),
+                    strings.create_replace_string_function('bookworm', 'trixie'),
+                    strings.create_replace_regexp_function(
+                        r'(http|https)://([^/]+)/(\b.*)(debian|debian-testing)/12\.7(\b.*)',
+                        r'\g<1>://\g<2>/\g<3>\g<4>/13.6\g<5>'),
+                    strings.create_replace_regexp_function(
+                        r'(http|https)://([^/]+)/(\b.*)(debian|debian-testing)/12(\b.*)',
+                        r'\g<1>://\g<2>/\g<3>\g<4>/13\g<5>'),
                     ], name="modify apt repositories to new OS"
                 ),
-                actions.SwitchPleskRepositories(to_os_version="12"),
+                actions.SwitchPleskRepositories(to_os_version="13"),
             ],
             "Pre-install packages": [
                 actions.InstallPackages([
@@ -128,7 +132,7 @@ class Debian11to12Upgrader(DistUpgrader):
             return []
 
         return [
-            actions.AssertMinPleskVersion("18.0.57"),
+            actions.AssertMinPleskVersion("18.0.73"),
             actions.AssertPleskInstallerNotInProgress(),
             actions.AssertMinPhpVersion("7.4"),
             actions.AssertDpkgNotLocked(),
@@ -168,7 +172,7 @@ and attach the feedback archive generated with --prepare-feedback or at least th
         self.downgrade_allowed = options.downgrade_allowed
 
 
-class Debian11to12Factory(DistUpgraderFactory):
+class Debian12to13Factory(DistUpgraderFactory):
     def __init__(self):
         super().__init__()
 
@@ -183,11 +187,11 @@ class Debian11to12Factory(DistUpgraderFactory):
         from_system: typing.Optional[dist.Distro] = None,
         to_system: typing.Optional[dist.Distro] = None
     ) -> bool:
-        return Debian11to12Upgrader.supports(from_system, to_system)
+        return Debian12to13Upgrader.supports(from_system, to_system)
 
     @property
     def upgrader_name(self) -> str:
-        return "Plesk::Debian11to12Upgrader"
+        return "Plesk::Debian12to13Upgrader"
 
     def create_upgrader(self, *args, **kwargs) -> DistUpgrader:
-        return Debian11to12Upgrader(*args, **kwargs)
+        return Debian12to13Upgrader(*args, **kwargs)

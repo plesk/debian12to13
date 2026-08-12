@@ -21,14 +21,14 @@ jobs:
       run: git fetch --force --tags
     - name: Prepare artifact store
       run: mkdir -p ./buck-out/gen
-    - name: Build debian11to12
+    - name: Build debian12to13
       id: build
       uses: SandakovMM/build-with-buck@v5
       with:
         command: build
-        target: :debian11to12
+        target: :debian12to13
     - name: Store result
       uses: actions/upload-artifact@v4
       with:
-        name: debian11to12
-        path: ./buck-out/gen/debian11to12
+        name: debian12to13
+        path: ./buck-out/gen/debian12to13
