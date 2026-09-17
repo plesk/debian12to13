@@ -39,8 +39,8 @@ To retrieve the latest available version of the tool, please navigate to the "Re
 
 To prepare the latest version of the tool for use, please run the following commands:
 ```shell
-> wget https://github.com/plesk/debian12to13/releases/download/v1.0.0/debian12to13.zip
-> unzip debian12to13.zip
+> wget https://github.com/plesk/debian12to13/releases/download/v1.0.1/debian12to13-1.0.1.zip
+> unzip debian12to13-1.0.1.zip
 > chmod 755 debian12to13
 ```
 
