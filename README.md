@@ -18,6 +18,39 @@ To avoid downtime and data loss, make sure you have read and understood the foll
 The conversion process should run between 20 and 30 minutes. **Plesk services, hosted websites, and e-mails will be unavailable during the entirety of the conversion process**.
 
 ## Known issues
+### False GRUB device failure in v1.0.1 with multiple installation targets
+
+The v1.0.1 release can reject valid GRUB installation targets during `--precheck`:
+
+```text
+Grub's install-device is not found: /dev/sda, /dev/sdb
+```
+
+This occurs when `grub-pc/install_devices` contains a comma-separated list,
+for example on a BIOS server with software RAID1. The released check passes
+that entire value to `os.path.exists()` as one path instead of checking each
+device separately.
+
+Confirm the configured targets and actual devices without changing the system:
+
+```shell
+debconf-show grub-pc
+lsblk -o NAME,TYPE,SIZE,MOUNTPOINT
+```
+
+If every configured device exists, use a build or subsequent release containing
+[#6](https://github.com/plesk/debian12to13/pull/6), which integrates the
+[shared parser fix](https://github.com/plesk/dist-upgrader/pull/184).
+The source fix is merged, but is not included in the v1.0.1 download shown below.
+The corrected check validates each device and still rejects missing targets.
+Run `./debian12to13 --precheck` again with the corrected build before conversion.
+
+Do not remove a valid GRUB target or bypass the check to work around this error.
+The suggested `dpkg --configure grub-pc` command does not repair the parser and
+will report an error when the package is already configured. If an individual
+target really is missing, investigate the GRUB configuration instead. Device
+existence alone does not establish that either disk is bootable.
+
 ### Blockers
 Do not use the utility if any of the following is true:
 - **Your system is in a container (like Virtuozzo containers, Docker Containers, etc).**
