@@ -78,6 +78,7 @@ class Debian12to13Upgrader(DistUpgrader):
                 actions.AddUpgradeSystemdService(os.path.abspath(upgrader_bin_path), options),
                 actions.DisablePleskSshBanner(),
                 actions.RepairPleskInstallation(),  # Executed at the finish phase only
+                actions.DisableServiceDuringUpgrade("named.service", start_on_post=True),  # Some actions expect it disabled
                 actions.UpgradePackages(allow_downgrade=self.downgrade_allowed),
                 actions.UpdatePlesk(),
                 actions.ConfigureMariadb({
@@ -90,6 +91,9 @@ class Debian12to13Upgrader(DistUpgrader):
                         "revert": actions.ConfigValueReplacer(new_value=None, old_value="0"),
                     },
                 }),
+            ],
+            "Reconfigure": [
+                actions.ResignDnssecZonesForBind919(),
             ],
             "Switch repositories": [
                 actions.AdoptAptRepositoriesUbuntu([
@@ -138,6 +142,7 @@ class Debian12to13Upgrader(DistUpgrader):
             actions.AssertDpkgNotLocked(),
             actions.AssertNotInContainer(),
             actions.AssertGrubInstallDeviceExists(),
+            actions.AssertDnssecOnBind919SupportedByPlesk(),
         ]
 
     def parse_args(self, args: typing.Sequence[str]) -> None:
