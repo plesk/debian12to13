@@ -123,6 +123,7 @@ class Debian12to13Upgrader(DistUpgrader):
                 actions.UpdatePleskExtensions(["panel-migrator", "site-import", "docker", "grafana", "ruby"]),
             ],
             "Dist-upgrade": [
+                actions.AddMailmanWebAccountMiddlewareForAllauth056(),
                 actions.DoDistupgrade(),
             ],
             "Finishing actions": [
